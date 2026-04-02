@@ -1,0 +1,21 @@
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.pylint.main]
+py-version = "3.11"
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "too-few-public-methods",
+    # collect_metrics intentionally catches all exceptions to keep the exporter alive
+    "broad-exception-caught",
+    # collect_metrics complexity is inherent to iterating nested API responses
+    "too-many-locals",
+    "too-many-branches",
+]
+
+[tool.pylint.format]
+max-line-length = 100
