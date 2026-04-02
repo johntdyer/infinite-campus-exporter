@@ -59,6 +59,60 @@ assignment_count = Gauge(
     ["student_id", "student_name", "course_name"],
 )
 
+assignment_assigned_date_timestamp = Gauge(
+    "ic_assignment_assigned_date_timestamp_seconds",
+    "Assignment assigned date as a Unix timestamp",
+    ["student_id", "student_name", "course_name", "assignment_name"],
+)
+
+assignment_multiplier = Gauge(
+    "ic_assignment_multiplier",
+    "Assignment weight multiplier",
+    ["student_id", "student_name", "course_name", "assignment_name"],
+)
+
+enrollment_info = Gauge(
+    "ic_enrollment_info",
+    "Student enrollment information (info metric, value is always 1)",
+    ["student_id", "student_name", "grade", "school_name", "calendar_name", "service_type", "enrollment_type"],
+)
+
+school_year_start_timestamp = Gauge(
+    "ic_school_year_start_timestamp_seconds",
+    "School calendar year start date as a Unix timestamp",
+    ["student_id", "student_name", "school_name", "calendar_name"],
+)
+
+school_year_end_timestamp = Gauge(
+    "ic_school_year_end_timestamp_seconds",
+    "School calendar year end date as a Unix timestamp",
+    ["student_id", "student_name", "school_name", "calendar_name"],
+)
+
+course_info = Gauge(
+    "ic_course_info",
+    "Course information (info metric, value is always 1)",
+    ["student_id", "student_name", "course_name", "course_number", "teacher", "room", "school_name"],
+)
+
+course_placement_info = Gauge(
+    "ic_course_placement_info",
+    "Course placement/schedule info per period and term (info metric, value is always 1)",
+    ["student_id", "student_name", "course_name", "period_name", "term_name", "teacher", "room", "start_time", "end_time"],
+)
+
+term_start_timestamp = Gauge(
+    "ic_term_start_timestamp_seconds",
+    "Term start date as a Unix timestamp",
+    ["term_name", "term_schedule_name", "is_primary"],
+)
+
+term_end_timestamp = Gauge(
+    "ic_term_end_timestamp_seconds",
+    "Term end date as a Unix timestamp",
+    ["term_name", "term_schedule_name", "is_primary"],
+)
+
 scrape_duration = Gauge(
     "ic_scrape_duration_seconds",
     "Time taken to scrape Infinite Campus API",
@@ -75,6 +129,21 @@ last_scrape_timestamp = Gauge(
 )
 
 
+def _parse_date_to_timestamp(date_str: str) -> float | None:
+    """Parse a date string to a Unix timestamp, returning None on failure."""
+    if not date_str:
+        return None
+    try:
+        return datetime.fromisoformat(date_str).replace(tzinfo=timezone.utc).timestamp()
+    except ValueError:
+        for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%m-%d-%Y"):
+            try:
+                return datetime.strptime(date_str, fmt).replace(tzinfo=timezone.utc).timestamp()
+            except ValueError:
+                continue
+    return None
+
+
 async def collect_metrics(ic: InfiniteCampus) -> None:
     """Fetch data from Infinite Campus and update Prometheus metrics."""
     start = time.monotonic()
@@ -89,9 +158,83 @@ async def collect_metrics(ic: InfiniteCampus) -> None:
             students = await ic.students()
             _LOGGER.info("Found %d student(s)", len(students))
 
+            terms = await ic.terms()
+            _LOGGER.info("Found %d term(s)", len(terms))
+            for term in terms:
+                t_labels = {
+                    "term_name": term.termname,
+                    "term_schedule_name": term.termschedulename,
+                    "is_primary": str(term.isprimary).lower(),
+                }
+                start_ts = _parse_date_to_timestamp(term.startdate)
+                end_ts = _parse_date_to_timestamp(term.enddate)
+                if start_ts is not None:
+                    term_start_timestamp.labels(**t_labels).set(start_ts)
+                if end_ts is not None:
+                    term_end_timestamp.labels(**t_labels).set(end_ts)
+
             for student in students:
                 student_id = str(student.personid)
                 student_name = f"{student.firstname} {student.lastname}"
+
+                for enrollment in student.enrollments:
+                    enrollment_info.labels(
+                        student_id=student_id,
+                        student_name=student_name,
+                        grade=enrollment.grade,
+                        school_name=enrollment.schoolname,
+                        calendar_name=enrollment.calendarname,
+                        service_type=enrollment.servicetype,
+                        enrollment_type="current",
+                    ).set(1)
+                    yr_labels = {
+                        "student_id": student_id,
+                        "student_name": student_name,
+                        "school_name": enrollment.schoolname,
+                        "calendar_name": enrollment.calendarname,
+                    }
+                    start_ts = _parse_date_to_timestamp(enrollment.calendarstartdate)
+                    end_ts = _parse_date_to_timestamp(enrollment.calendarenddate)
+                    if start_ts is not None:
+                        school_year_start_timestamp.labels(**yr_labels).set(start_ts)
+                    if end_ts is not None:
+                        school_year_end_timestamp.labels(**yr_labels).set(end_ts)
+
+                for enrollment in student.futureenrollments:
+                    enrollment_info.labels(
+                        student_id=student_id,
+                        student_name=student_name,
+                        grade=enrollment.grade,
+                        school_name=enrollment.schoolname,
+                        calendar_name=enrollment.calendarname,
+                        service_type=enrollment.servicetype,
+                        enrollment_type="future",
+                    ).set(1)
+
+                courses = await ic.courses(student.personid)
+                _LOGGER.info("Student %s: %d course(s)", student_name, len(courses))
+                for course in courses:
+                    course_info.labels(
+                        student_id=student_id,
+                        student_name=student_name,
+                        course_name=course.coursename,
+                        course_number=course.coursenumber,
+                        teacher=course.teacherdisplay or "",
+                        room=course.roomname or "",
+                        school_name=course.schoolname,
+                    ).set(1)
+                    for placement in course.sectionplacements:
+                        course_placement_info.labels(
+                            student_id=student_id,
+                            student_name=student_name,
+                            course_name=course.coursename,
+                            period_name=placement.periodname,
+                            term_name=placement.termname,
+                            teacher=placement.teacherdisplay or "",
+                            room=placement.roomname or "",
+                            start_time=placement.starttime or "",
+                            end_time=placement.endtime or "",
+                        ).set(1)
 
                 assignments = await ic.assignments(student.personid)
                 _LOGGER.info(
@@ -135,21 +278,16 @@ async def collect_metrics(ic: InfiniteCampus) -> None:
                                 **{**labels, "flag": flag}
                             ).set(1 if val else 0)
 
+                    if a.assigneddate:
+                        assigned_ts = _parse_date_to_timestamp(a.assigneddate)
+                        if assigned_ts is not None:
+                            assignment_assigned_date_timestamp.labels(**labels).set(assigned_ts)
+
+                    if a.multiplier is not None:
+                        assignment_multiplier.labels(**labels).set(a.multiplier)
+
                     if a.duedate:
-                        due_ts = None
-                        try:
-                            due_ts = datetime.fromisoformat(a.duedate).replace(
-                                tzinfo=timezone.utc
-                            ).timestamp()
-                        except ValueError:
-                            for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%m-%d-%Y"):
-                                try:
-                                    due_ts = datetime.strptime(a.duedate, fmt).replace(
-                                        tzinfo=timezone.utc
-                                    ).timestamp()
-                                    break
-                                except ValueError:
-                                    continue
+                        due_ts = _parse_date_to_timestamp(a.duedate)
                         if due_ts is not None:
                             assignment_due_date_timestamp.labels(**labels).set(due_ts)
                         else:
