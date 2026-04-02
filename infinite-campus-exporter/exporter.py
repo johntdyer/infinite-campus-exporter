@@ -4,6 +4,7 @@ import asyncio
 import logging
 import os
 import time
+from datetime import datetime, timezone
 
 import aiohttp
 from dotenv import load_dotenv
@@ -44,6 +45,12 @@ assignment_flags = Gauge(
     "ic_assignment_flag",
     "Assignment status flags (late, missing, turned_in, incomplete, dropped)",
     ["student_id", "student_name", "course_name", "assignment_name", "flag"],
+)
+
+assignment_due_date_timestamp = Gauge(
+    "ic_assignment_due_date_timestamp",
+    "Assignment due date as a Unix timestamp",
+    ["student_id", "student_name", "course_name", "assignment_name"],
 )
 
 assignment_count = Gauge(
@@ -127,6 +134,17 @@ async def collect_metrics(ic: InfiniteCampus) -> None:
                             assignment_flags.labels(
                                 **{**labels, "flag": flag}
                             ).set(1 if val else 0)
+
+                    if a.duedate:
+                        for fmt in ("%Y-%m-%d", "%m/%d/%Y"):
+                            try:
+                                due_ts = datetime.strptime(a.duedate, fmt).replace(
+                                    tzinfo=timezone.utc
+                                ).timestamp()
+                                assignment_due_date_timestamp.labels(**labels).set(due_ts)
+                                break
+                            except ValueError:
+                                continue
 
                     course_counts[a.coursename] = course_counts.get(a.coursename, 0) + 1
 
