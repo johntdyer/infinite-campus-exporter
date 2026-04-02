@@ -4,14 +4,13 @@ import asyncio
 import logging
 import os
 import time
-from datetime import datetime
 
 import aiohttp
 from dotenv import load_dotenv
 from ic_parent_api.infinitecampus import InfiniteCampus
+from prometheus_client import Gauge, start_http_server
 
 load_dotenv()
-from prometheus_client import Gauge, Info, start_http_server, REGISTRY, GC_COLLECTOR, PLATFORM_COLLECTOR, PROCESS_COLLECTOR
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 _LOGGER = logging.getLogger(__name__)
@@ -158,6 +157,7 @@ async def run_loop(ic: InfiniteCampus, interval: int) -> None:
 
 
 def main() -> None:
+    """Read configuration from environment and start the exporter."""
     base_url = os.environ["IC_BASE_URL"]
     username = os.environ["IC_USERNAME"]
     password = os.environ["IC_PASSWORD"]
