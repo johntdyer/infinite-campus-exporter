@@ -35,6 +35,7 @@ def make_assignment(
     turnedin=True,
     incomplete=False,
     dropped=False,
+    duedate="2024-01-15",
 ):
     a = MagicMock()
     a.coursename = coursename
@@ -47,6 +48,7 @@ def make_assignment(
     a.turnedin = turnedin
     a.incomplete = incomplete
     a.dropped = dropped
+    a.duedate = duedate
     return a
 
 
@@ -309,6 +311,68 @@ async def test_multiple_students_are_scraped():
     assert ic.assignments.call_count == 2
     ic.assignments.assert_any_call(1)
     ic.assignments.assert_any_call(2)
+
+
+# ---------------------------------------------------------------------------
+# Exception handling
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Due date timestamp
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_due_date_timestamp_is_set():
+    student = make_student()
+    assignment = make_assignment(duedate="2024-03-15")
+    ic = make_ic(students=[student], assignments=[assignment])
+
+    with patch("aiohttp.ClientSession", return_value=mock_session_ctx()), \
+         patch.object(exporter.scrape_success, "set"), \
+         patch.object(exporter.scrape_duration, "set"), \
+         patch.object(exporter.last_scrape_timestamp, "set"), \
+         patch.object(exporter.assignment_due_date_timestamp, "labels") as mock_labels:
+        mock_gauge = MagicMock()
+        mock_labels.return_value = mock_gauge
+        await exporter.collect_metrics(ic)
+
+    mock_gauge.set.assert_called_once()
+    ts = mock_gauge.set.call_args[0][0]
+    assert ts > 0
+
+
+@pytest.mark.asyncio
+async def test_due_date_us_format_is_parsed():
+    student = make_student()
+    assignment = make_assignment(duedate="03/15/2024")
+    ic = make_ic(students=[student], assignments=[assignment])
+
+    with patch("aiohttp.ClientSession", return_value=mock_session_ctx()), \
+         patch.object(exporter.scrape_success, "set"), \
+         patch.object(exporter.scrape_duration, "set"), \
+         patch.object(exporter.last_scrape_timestamp, "set"), \
+         patch.object(exporter.assignment_due_date_timestamp, "labels") as mock_labels:
+        mock_gauge = MagicMock()
+        mock_labels.return_value = mock_gauge
+        await exporter.collect_metrics(ic)
+
+    mock_gauge.set.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_invalid_due_date_does_not_raise():
+    student = make_student()
+    assignment = make_assignment(duedate="not-a-date")
+    ic = make_ic(students=[student], assignments=[assignment])
+
+    with patch("aiohttp.ClientSession", return_value=mock_session_ctx()), \
+         patch.object(exporter.scrape_success, "set") as mock_set, \
+         patch.object(exporter.scrape_duration, "set"), \
+         patch.object(exporter.last_scrape_timestamp, "set"):
+        await exporter.collect_metrics(ic)
+
+    # Scrape should still succeed — bad date is silently skipped
+    mock_set.assert_called_with(1)
 
 
 # ---------------------------------------------------------------------------
