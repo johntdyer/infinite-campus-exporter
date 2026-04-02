@@ -1,602 +1,2461 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
-    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" },
-    { "type": "panel", "id": "stat", "name": "Stat", "version": "" },
-    { "type": "panel", "id": "table", "name": "Table", "version": "" },
-    { "type": "panel", "id": "barchart", "name": "Bar chart", "version": "" },
-    { "type": "panel", "id": "text", "name": "Text", "version": "" }
-  ],
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "description": "Infinite Campus student grades and assignment tracker",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [],
   "panels": [
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 100,
-      "title": "⚠️ Alerts",
+      "panels": [],
+      "title": "\u26a0\ufe0f Alerts",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P11EFF894A648B172"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [
-            { "options": { "0": { "color": "green", "index": 0, "text": "None" } }, "type": "value" }
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "None"
+                }
+              },
+              "type": "value"
+            }
           ],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "red", "value": 1 }
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
             ]
           },
-          "unit": "short",
-          "noValue": "0"
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "expr": "sum(\n  ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1\n  and on(assignment_name, course_name, student_name, student_id)\n  ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)\n) or vector(0)",
+          "instant": true,
+          "legendFormat": "Missing",
+          "refId": "A"
+        }
+      ],
+      "title": "Missing Assignments (Last $weeks Wks)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P11EFF894A648B172"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "None"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
       "id": 1,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
       },
-      "title": "Missing Assignments (All Time)",
-      "type": "stat",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
           "expr": "sum(ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"}) or vector(0)",
           "instant": true,
           "legendFormat": "Missing",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Missing Assignments (All Time)",
+      "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P11EFF894A648B172"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [
-            { "options": { "0": { "color": "green", "index": 0, "text": "None" } }, "type": "value" }
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "None"
+                }
+              },
+              "type": "value"
+            }
           ],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 1 }
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
             ]
           },
-          "unit": "short",
-          "noValue": "0"
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
       "id": 2,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
       },
-      "title": "Late Assignments",
-      "type": "stat",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
           "expr": "sum(ic_assignment_flag{student_name=~\"$student\", flag=\"late\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)) or vector(0)",
           "instant": true,
           "legendFormat": "Late",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Late Assignments",
+      "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P11EFF894A648B172"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": null },
-              { "color": "orange", "value": 60 },
-              { "color": "yellow", "value": 70 },
-              { "color": "green", "value": 80 }
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
             ]
           },
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "noValue": "N/A"
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
-      "id": 3,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "textMode": "auto",
-        "wideLayout": true
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
       },
-      "title": "Overall Average Score",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "avg(ic_assignment_score_percentage{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800))",
-          "instant": true,
-          "legendFormat": "Avg Score",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 1 }
-            ]
-          },
-          "unit": "short",
-          "noValue": "0"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
       "id": 4,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
       },
-      "title": "Incomplete Assignments",
-      "type": "stat",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
           "expr": "sum(ic_assignment_flag{student_name=~\"$student\", flag=\"incomplete\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)) or vector(0)",
           "instant": true,
           "legendFormat": "Incomplete",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Incomplete Assignments",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P11EFF894A648B172"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "noValue": "N/A",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "expr": "avg(ic_assignment_score_percentage{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800))",
+          "instant": true,
+          "legendFormat": "Avg Score",
+          "refId": "A"
+        }
+      ],
+      "title": "Overall Average Score",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P11EFF894A648B172"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "None"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "blue",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "expr": "count(\n  ((ic_assignment_due_date_timestamp{student_name=~\"$student\"} - time()) / 86400 > 0) < ($weeks * 7)\n) or vector(0)",
+          "instant": true,
+          "legendFormat": "Upcoming",
+          "refId": "A"
+        }
+      ],
+      "title": "Upcoming Due (Next $weeks Wks)",
+      "type": "stat"
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
       "id": 101,
+      "panels": [],
       "title": "Grades by Course",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P11EFF894A648B172"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": null },
-              { "color": "orange", "value": 60 },
-              { "color": "yellow", "value": 70 },
-              { "color": "green", "value": 80 }
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
             ]
           },
-          "unit": "percent",
-          "min": 0,
-          "max": 100
+          "unit": "percent"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 6 },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
       "id": 5,
       "options": {
         "barRadius": 0.05,
         "barWidth": 0.7,
+        "colorByField": "Value",
         "fullHighlight": false,
         "groupWidth": 0.7,
-        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
         "orientation": "horizontal",
         "showValue": "always",
         "stacking": "none",
-        "tooltip": { "mode": "single", "sort": "none" },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
         "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 100,
-        "colorByField": "Value"
+        "xTickLabelSpacing": 100
       },
-      "title": "Average Score by Course",
-      "type": "barchart",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
           "expr": "avg by (course_name) (ic_assignment_score_percentage{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800))",
           "instant": true,
           "legendFormat": "{{course_name}}",
           "refId": "A"
         }
-      ]
+      ],
+      "title": "Average Score by Course",
+      "type": "barchart"
     },
     {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
       "id": 102,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "color-background"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Course"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 200
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Assignment"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 300
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Missing"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  },
+                  {
+                    "id": "custom.hideFrom.viz",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Days Overdue"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 120
+                  },
+                  {
+                    "id": "unit",
+                    "value": "d"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "yellow",
+                          "value": 0
+                        },
+                        {
+                          "color": "orange",
+                          "value": 7
+                        },
+                        {
+                          "color": "red",
+                          "value": 14
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Due Date"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 15
+          },
+          "id": 6,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Course"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(time() - ic_assignment_due_date_timestamp{student_name=~\"$student\"}) / 86400\nand on(assignment_name, course_name, student_name, student_id)\nic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(ic_assignment_due_date_timestamp{student_name=~\"$student\"} * 1000)\nand on(assignment_name, course_name, student_name, student_id)\nic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "C"
+            }
+          ],
+          "title": "Missing Assignments (Last $weeks Weeks)",
+          "transformations": [
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "assignment_name",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "course_name",
+                    "assignment_name",
+                    "Value #B",
+                    "Value #C"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "course_name 1": true,
+                  "course_name 2": true
+                },
+                "indexByName": {
+                  "Value #B": 3,
+                  "Value #C": 2,
+                  "assignment_name": 1,
+                  "course_name": 0
+                },
+                "renameByName": {
+                  "Value #B": "Days Overdue",
+                  "Value #C": "Due Date",
+                  "assignment_name": "Assignment",
+                  "course_name": "Course"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": [
+                  {
+                    "desc": true,
+                    "displayName": "Days Overdue"
+                  }
+                ]
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
       "title": "Missing Assignments Detail",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "fixed", "fixedColor": "red" },
-          "custom": {
-            "align": "auto",
-            "cellOptions": { "type": "color-background" },
-            "filterable": true,
-            "inspect": false
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 105,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [{ "color": "red", "value": null }]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "Course" },
-            "properties": [{ "id": "custom.width", "value": 200 }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Assignment" },
-            "properties": [{ "id": "custom.width", "value": 300 }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Missing" },
-            "properties": [
-              { "id": "custom.width", "value": 80 },
-              { "id": "custom.hidden", "value": true }
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "color-background"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Course"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 200
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Assignment"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 300
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Missing"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  },
+                  {
+                    "id": "custom.hideFrom.viz",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Days Overdue"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 120
+                  },
+                  {
+                    "id": "unit",
+                    "value": "d"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "yellow",
+                          "value": 0
+                        },
+                        {
+                          "color": "orange",
+                          "value": 7
+                        },
+                        {
+                          "color": "red",
+                          "value": 14
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Due Date"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto"
+                    }
+                  }
+                ]
+              }
             ]
           },
-          {
-            "matcher": { "id": "byName", "options": "Days Overdue" },
-            "properties": [
-              { "id": "custom.width", "value": 120 },
-              { "id": "unit", "value": "d" },
-              { "id": "decimals", "value": 0 },
-              { "id": "custom.cellOptions", "value": { "type": "color-background" } },
-              { "id": "color", "value": { "mode": "thresholds" } },
-              { "id": "thresholds", "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    { "color": "yellow", "value": null },
-                    { "color": "orange", "value": 7 },
-                    { "color": "red", "value": 14 }
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 17
+          },
+          "id": 12,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Course"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"late\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(time() - ic_assignment_due_date_timestamp{student_name=~\"$student\"}) / 86400\nand on(assignment_name, course_name, student_name, student_id)\nic_assignment_flag{student_name=~\"$student\", flag=\"late\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(ic_assignment_due_date_timestamp{student_name=~\"$student\"} * 1000)\nand on(assignment_name, course_name, student_name, student_id)\nic_assignment_flag{student_name=~\"$student\", flag=\"late\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "C"
+            }
+          ],
+          "title": "Late Assignments (Last $weeks Wks)",
+          "transformations": [
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "assignment_name",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "course_name",
+                    "assignment_name",
+                    "Value #B",
+                    "Value #C"
                   ]
                 }
               }
-            ]
-          }
-        ]
-      },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 15 },
-      "id": 6,
-      "options": {
-        "cellHeight": "sm",
-        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
-        "showHeader": true,
-        "sortBy": [{ "desc": false, "displayName": "Course" }]
-      },
-      "title": "Missing Assignments (All Time)",
-      "type": "table",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "A",
-          "format": "table"
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "(time() - ic_assignment_due_date_timestamp{student_name=~\"$student\"}) / 86400 and on(assignment_name, course_name, student_name, student_id) ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "B",
-          "format": "table"
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "course_name 1": true,
+                  "course_name 2": true
+                },
+                "indexByName": {
+                  "Value #B": 3,
+                  "Value #C": 2,
+                  "assignment_name": 1,
+                  "course_name": 0
+                },
+                "renameByName": {
+                  "Value #B": "Days Overdue",
+                  "Value #C": "Due Date",
+                  "assignment_name": "Assignment",
+                  "course_name": "Course"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": [
+                  {
+                    "desc": true,
+                    "displayName": "Days Overdue"
+                  }
+                ]
+              }
+            }
+          ],
+          "type": "table"
         }
       ],
-      "transformations": [
-        {
-          "id": "joinByField",
-          "options": { "byField": "assignment_name", "mode": "outer" }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": { "names": ["course_name", "assignment_name", "Value A", "Value B"] }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "renameByName": {
-              "course_name": "Course",
-              "assignment_name": "Assignment",
-              "Value A": "Missing",
-              "Value B": "Days Overdue"
-            }
-          }
-        },
-        { "id": "sortBy", "options": { "fields": [{ "desc": true, "displayName": "Days Overdue" }] } }
-      ]
+      "title": "Late Assignments Detail",
+      "type": "row"
     },
     {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 104,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "color-background"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Course"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 200
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Assignment"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 300
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Missing"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  },
+                  {
+                    "id": "custom.hideFrom.viz",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Days Overdue"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 120
+                  },
+                  {
+                    "id": "unit",
+                    "value": "d"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "yellow",
+                          "value": 0
+                        },
+                        {
+                          "color": "orange",
+                          "value": 7
+                        },
+                        {
+                          "color": "red",
+                          "value": 14
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Due Date"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 11,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Course"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"incomplete\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(time() - ic_assignment_due_date_timestamp{student_name=~\"$student\"}) / 86400\nand on(assignment_name, course_name, student_name, student_id)\nic_assignment_flag{student_name=~\"$student\", flag=\"incomplete\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(ic_assignment_due_date_timestamp{student_name=~\"$student\"} * 1000)\nand on(assignment_name, course_name, student_name, student_id)\nic_assignment_flag{student_name=~\"$student\", flag=\"incomplete\"} == 1\nand on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "C"
+            }
+          ],
+          "title": "Incomplete Assignments (Last $weeks Wks)",
+          "transformations": [
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "assignment_name",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "course_name",
+                    "assignment_name",
+                    "Value #B",
+                    "Value #C"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "course_name 1": true,
+                  "course_name 2": true
+                },
+                "indexByName": {
+                  "Value #B": 3,
+                  "Value #C": 2,
+                  "assignment_name": 1,
+                  "course_name": 0
+                },
+                "renameByName": {
+                  "Value #B": "Days Overdue",
+                  "Value #C": "Due Date",
+                  "assignment_name": "Assignment",
+                  "course_name": "Course"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": [
+                  {
+                    "desc": true,
+                    "displayName": "Days Overdue"
+                  }
+                ]
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Incomplete Assignments Detail",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
       "id": 103,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "course_name"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Course"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 180
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "assignment_name"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Assignment"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 280
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Score %"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  },
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "red"
+                        },
+                        {
+                          "color": "orange",
+                          "value": 60
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 70
+                        },
+                        {
+                          "color": "green",
+                          "value": 80
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Points"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Pts"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Missing"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 75
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green"
+                        },
+                        {
+                          "color": "red",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "text": ""
+                          },
+                          "1": {
+                            "text": "MISSING"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Late"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 60
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "transparent"
+                        },
+                        {
+                          "color": "orange",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "text": ""
+                          },
+                          "1": {
+                            "text": "LATE"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Turned In"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "text": ""
+                          },
+                          "1": {
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 24,
+            "x": 0,
+            "y": 42
+          },
+          "id": 7,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Course"
+              }
+            ]
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_score_percentage{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_score_points{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_total_points{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"}",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"late\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"turnedin\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "F"
+            }
+          ],
+          "title": "All Assignments",
+          "transformations": [
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "assignment_name",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "pattern": "^(course_name|assignment_name|Value A|Value B|Value C|Value D|Value E|Value F)$"
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "Value A": "Score %",
+                  "Value B": "Points",
+                  "Value C": "Total Pts",
+                  "Value D": "Missing",
+                  "Value E": "Late",
+                  "Value F": "Turned In",
+                  "assignment_name": "Assignment",
+                  "course_name": "Course"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
       "title": "All Assignments",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "custom": {
-            "align": "auto",
-            "cellOptions": { "type": "auto" },
-            "filterable": true,
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "red", "value": 80 }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "course_name" },
-            "properties": [
-              { "id": "displayName", "value": "Course" },
-              { "id": "custom.width", "value": 180 }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "assignment_name" },
-            "properties": [
-              { "id": "displayName", "value": "Assignment" },
-              { "id": "custom.width", "value": 280 }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Score %" },
-            "properties": [
-              { "id": "custom.width", "value": 100 },
-              { "id": "unit", "value": "percent" },
-              { "id": "custom.cellOptions", "value": { "type": "color-background", "mode": "gradient" } },
-              { "id": "color", "value": { "mode": "thresholds" } },
-              { "id": "thresholds", "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    { "color": "red", "value": null },
-                    { "color": "orange", "value": 60 },
-                    { "color": "yellow", "value": 70 },
-                    { "color": "green", "value": 80 }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Points" },
-            "properties": [{ "id": "custom.width", "value": 80 }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Total Pts" },
-            "properties": [{ "id": "custom.width", "value": 80 }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Missing" },
-            "properties": [
-              { "id": "custom.width", "value": 75 },
-              { "id": "custom.cellOptions", "value": { "type": "color-background" } },
-              { "id": "color", "value": { "mode": "thresholds" } },
-              { "id": "thresholds", "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    { "color": "green", "value": null },
-                    { "color": "red", "value": 1 }
-                  ]
-                }
-              },
-              { "id": "mappings", "value": [
-                  { "options": { "0": { "text": "" }, "1": { "text": "MISSING" } }, "type": "value" }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Late" },
-            "properties": [
-              { "id": "custom.width", "value": 60 },
-              { "id": "custom.cellOptions", "value": { "type": "color-background" } },
-              { "id": "color", "value": { "mode": "thresholds" } },
-              { "id": "thresholds", "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    { "color": "transparent", "value": null },
-                    { "color": "orange", "value": 1 }
-                  ]
-                }
-              },
-              { "id": "mappings", "value": [
-                  { "options": { "0": { "text": "" }, "1": { "text": "LATE" } }, "type": "value" }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Turned In" },
-            "properties": [
-              { "id": "custom.width", "value": 80 },
-              { "id": "mappings", "value": [
-                  { "options": { "0": { "text": "" }, "1": { "text": "Yes" } }, "type": "value" }
-                ]
-              }
-            ]
-          }
-        ]
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
       },
-      "gridPos": { "h": 16, "w": 24, "x": 0, "y": 24 },
-      "id": 7,
-      "options": {
-        "cellHeight": "sm",
-        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
-        "showHeader": true,
-        "sortBy": [{ "desc": false, "displayName": "Course" }]
-      },
-      "title": "All Assignments",
-      "type": "table",
-      "targets": [
+      "id": 106,
+      "panels": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_score_percentage{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "A",
-          "format": "table"
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_score_points{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "B",
-          "format": "table"
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_total_points{student_name=~\"$student\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "C",
-          "format": "table"
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"}",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "D",
-          "format": "table"
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"late\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "E",
-          "format": "table"
-        },
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"turnedin\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
-          "instant": true,
-          "legendFormat": "__auto",
-          "refId": "F",
-          "format": "table"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Course"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 200
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Assignment"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 300
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Days Until Due"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 130
+                  },
+                  {
+                    "id": "unit",
+                    "value": "d"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "red",
+                          "value": 0
+                        },
+                        {
+                          "color": "orange",
+                          "value": 3
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 7
+                        },
+                        {
+                          "color": "green",
+                          "value": 14
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Due Date"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Assigned Date"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Weight"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 19
+          },
+          "id": 13,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Days Until Due"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "((ic_assignment_due_date_timestamp{student_name=~\"$student\"} - time()) / 86400 > 0) < ($weeks * 7)",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(ic_assignment_due_date_timestamp{student_name=~\"$student\"} * 1000)\nand on(assignment_name, course_name, student_name, student_id)\n(((ic_assignment_due_date_timestamp{student_name=~\"$student\"} - time()) / 86400 > 0) < ($weeks * 7))",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(ic_assignment_assigned_date_timestamp_seconds{student_name=~\"$student\"} * 1000)\nand on(assignment_name, course_name, student_name, student_id)\n(((ic_assignment_due_date_timestamp{student_name=~\"$student\"} - time()) / 86400 > 0) < ($weeks * 7))",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_assignment_multiplier{student_name=~\"$student\"}\nand on(assignment_name, course_name, student_name, student_id)\n(((ic_assignment_due_date_timestamp{student_name=~\"$student\"} - time()) / 86400 > 0) < ($weeks * 7))",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "refId": "D"
+            }
+          ],
+          "title": "Upcoming Assignments (Next $weeks Weeks)",
+          "transformations": [
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "assignment_name",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "course_name",
+                    "assignment_name",
+                    "Value #A",
+                    "Value #B",
+                    "Value #C",
+                    "Value #D"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #A": 2,
+                  "Value #B": 3,
+                  "Value #C": 4,
+                  "Value #D": 5,
+                  "assignment_name": 1,
+                  "course_name": 0
+                },
+                "renameByName": {
+                  "Value #A": "Days Until Due",
+                  "Value #B": "Due Date",
+                  "Value #C": "Assigned Date",
+                  "Value #D": "Weight",
+                  "assignment_name": "Assignment",
+                  "course_name": "Course"
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": [
+                  {
+                    "desc": false,
+                    "displayName": "Days Until Due"
+                  }
+                ]
+              }
+            }
+          ],
+          "type": "table"
         }
       ],
-      "transformations": [
+      "title": "Upcoming Assignments",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 107,
+      "panels": [
         {
-          "id": "joinByField",
-          "options": { "byField": "assignment_name", "mode": "outer" }
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 0,
+            "y": 20
+          },
+          "id": 14,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "name"
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_enrollment_info{student_name=~\"$student\", enrollment_type=\"current\"}",
+              "instant": true,
+              "legendFormat": "Grade {{grade}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Current Grade",
+          "type": "stat"
         },
         {
-          "id": "filterFieldsByName",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "green",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "dateTimeAsLocal"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 6,
+            "y": 20
+          },
+          "id": 15,
           "options": {
-            "include": {
-              "pattern": "^(course_name|assignment_name|Value A|Value B|Value C|Value D|Value E|Value F)$"
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_school_year_start_timestamp_seconds{student_name=~\"$student\"} * 1000",
+              "instant": true,
+              "legendFormat": "School Year Start",
+              "refId": "A"
             }
-          }
+          ],
+          "title": "School Year Start",
+          "type": "stat"
         },
         {
-          "id": "organize",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "orange",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "orange",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "dateTimeAsLocal"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 12,
+            "y": 20
+          },
+          "id": 16,
           "options": {
-            "renameByName": {
-              "course_name": "Course",
-              "assignment_name": "Assignment",
-              "Value A": "Score %",
-              "Value B": "Points",
-              "Value C": "Total Pts",
-              "Value D": "Missing",
-              "Value E": "Late",
-              "Value F": "Turned In"
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "ic_school_year_end_timestamp_seconds{student_name=~\"$student\"} * 1000",
+              "instant": true,
+              "legendFormat": "School Year End",
+              "refId": "A"
             }
-          }
+          ],
+          "title": "School Year End",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P11EFF894A648B172"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "orange",
+                    "value": 30
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 60
+                  },
+                  {
+                    "color": "green",
+                    "value": 90
+                  }
+                ]
+              },
+              "unit": "d"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 18,
+            "y": 20
+          },
+          "id": 17,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P11EFF894A648B172"
+              },
+              "expr": "(ic_school_year_end_timestamp_seconds{student_name=~\"$student\"} - time()) / 86400",
+              "instant": true,
+              "legendFormat": "Days Remaining",
+              "refId": "A"
+            }
+          ],
+          "title": "Days Until School Year End",
+          "type": "stat"
         }
-      ]
+      ],
+      "title": "Enrollment & School Year",
+      "type": "row"
     }
   ],
+  "preload": false,
   "refresh": "5m",
-  "schemaVersion": 38,
-  "tags": ["infinite-campus", "grades", "students"],
+  "schemaVersion": 42,
+  "tags": [
+    "infinite-campus",
+    "grades",
+    "students"
+  ],
   "templating": {
     "list": [
       {
         "current": {},
-        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P11EFF894A648B172"
+        },
         "definition": "label_values(ic_assignment_score_percentage, student_name)",
-        "hide": 0,
         "includeAll": false,
-        "multi": false,
+        "label": "Student",
         "name": "student",
         "options": [],
         "query": {
@@ -606,34 +2465,65 @@
         "refresh": 2,
         "regex": "",
         "sort": 1,
-        "label": "Student",
         "type": "query"
       },
       {
-        "current": { "selected": true, "text": "8", "value": "8" },
-        "hide": 0,
+        "current": {
+          "text": "8",
+          "value": "8"
+        },
         "includeAll": false,
-        "multi": false,
+        "label": "Look Back (weeks)",
         "name": "weeks",
         "options": [
-          { "selected": false, "text": "1", "value": "1" },
-          { "selected": false, "text": "2", "value": "2" },
-          { "selected": false, "text": "4", "value": "4" },
-          { "selected": true,  "text": "8", "value": "8" },
-          { "selected": false, "text": "12", "value": "12" },
-          { "selected": false, "text": "26", "value": "26" },
-          { "selected": false, "text": "52", "value": "52" }
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "12",
+            "value": "12"
+          },
+          {
+            "selected": false,
+            "text": "26",
+            "value": "26"
+          },
+          {
+            "selected": false,
+            "text": "52",
+            "value": "52"
+          }
         ],
         "query": "1,2,4,8,12,26,52",
-        "label": "Look Back (weeks)",
         "type": "custom"
       }
     ]
   },
-  "time": { "from": "now-6h", "to": "now" },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
   "timepicker": {},
   "timezone": "browser",
   "title": "Infinite Campus - Student Grades",
   "uid": "ic-campus-grades",
-  "version": 3
+  "weekStart": ""
 }
