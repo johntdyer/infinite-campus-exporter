@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - 'v*.*.*'
 
 jobs:
   publish:
@@ -18,19 +20,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get next version
+      - name: Get version
         id: version
         run: |
-          # Get the latest semver tag, default to v0.0.0 if none exists
-          LATEST=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
-          LATEST=${LATEST:-v0.0.0}
-          # Increment patch version
-          MAJOR=$(echo $LATEST | cut -d. -f1 | tr -d v)
-          MINOR=$(echo $LATEST | cut -d. -f2)
-          PATCH=$(echo $LATEST | cut -d. -f3)
-          NEXT="v${MAJOR}.${MINOR}.$((PATCH + 1))"
-          echo "tag=$NEXT" >> $GITHUB_OUTPUT
-          echo "Next version: $NEXT"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            # Triggered by a tag push — use the tag directly
+            TAG="${GITHUB_REF#refs/tags/}"
+            echo "tag=$TAG" >> $GITHUB_OUTPUT
+            echo "create_tag=false" >> $GITHUB_OUTPUT
+            echo "Version from tag: $TAG"
+          else
+            # Triggered by a branch push — auto-increment
+            LATEST=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+            LATEST=${LATEST:-v0.0.0}
+            MAJOR=$(echo $LATEST | cut -d. -f1 | tr -d v)
+            MINOR=$(echo $LATEST | cut -d. -f2)
+            PATCH=$(echo $LATEST | cut -d. -f3)
+            NEXT="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+            echo "tag=$NEXT" >> $GITHUB_OUTPUT
+            echo "create_tag=true" >> $GITHUB_OUTPUT
+            echo "Next version: $NEXT"
+          fi
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -49,6 +59,7 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/ic-campus-exporter:${{ steps.version.outputs.tag }}
 
       - name: Tag release
+        if: steps.version.outputs.create_tag == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
