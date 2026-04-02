@@ -74,6 +74,8 @@ Metrics are available at `http://localhost:9877/metrics`.
 
 ### Docker Compose (recommended)
 
+> **Latest image:** `ghcr.io/johntdyer/ic-campus-exporter:latest`
+
 Spins up the exporter, Prometheus, and Grafana together:
 
 ```bash

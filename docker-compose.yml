@@ -1,5 +1,6 @@
 services:
   ic-exporter:
+    image: ghcr.io/johntdyer/ic-campus-exporter:latest
     build: ./infinite-campus-exporter
     restart: unless-stopped
     env_file: ./infinite-campus-exporter/.env
