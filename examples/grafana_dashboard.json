@@ -356,7 +356,7 @@
         {
           "id": "filterFieldsByName",
           "options": {
-            "include": { "names": ["course_name", "assignment_name", "Value #A", "Value #B"] }
+            "include": { "names": ["course_name", "assignment_name", "Value A", "Value B"] }
           }
         },
         {
@@ -365,8 +365,8 @@
             "renameByName": {
               "course_name": "Course",
               "assignment_name": "Assignment",
-              "Value #A": "Missing",
-              "Value #B": "Days Overdue"
+              "Value A": "Missing",
+              "Value B": "Days Overdue"
             }
           }
         },
