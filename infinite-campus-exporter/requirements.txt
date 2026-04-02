@@ -1,0 +1,3 @@
+ic-parent-api
+prometheus-client
+python-dotenv
