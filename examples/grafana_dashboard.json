@@ -285,27 +285,37 @@
         },
         "overrides": [
           {
-            "matcher": { "id": "byName", "options": "course_name" },
-            "properties": [
-              { "id": "displayName", "value": "Course" },
-              { "id": "custom.width", "value": 200 }
-            ]
+            "matcher": { "id": "byName", "options": "Course" },
+            "properties": [{ "id": "custom.width", "value": 200 }]
           },
           {
-            "matcher": { "id": "byName", "options": "assignment_name" },
-            "properties": [
-              { "id": "displayName", "value": "Assignment" },
-              { "id": "custom.width", "value": 300 }
-            ]
+            "matcher": { "id": "byName", "options": "Assignment" },
+            "properties": [{ "id": "custom.width", "value": 300 }]
           },
           {
-            "matcher": { "id": "byName", "options": "Value" },
+            "matcher": { "id": "byName", "options": "Missing" },
             "properties": [
-              { "id": "displayName", "value": "Missing" },
               { "id": "custom.width", "value": 80 },
-              { "id": "mappings", "value": [
-                { "options": { "1": { "color": "red", "index": 0, "text": "YES" } }, "type": "value" }
-              ]}
+              { "id": "custom.hidden", "value": true }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Days Overdue" },
+            "properties": [
+              { "id": "custom.width", "value": 120 },
+              { "id": "unit", "value": "d" },
+              { "id": "decimals", "value": 0 },
+              { "id": "custom.cellOptions", "value": { "type": "color-background" } },
+              { "id": "color", "value": { "mode": "thresholds" } },
+              { "id": "thresholds", "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "yellow", "value": null },
+                    { "color": "orange", "value": 7 },
+                    { "color": "red", "value": 14 }
+                  ]
+                }
+              }
             ]
           }
         ]
@@ -328,16 +338,39 @@
           "legendFormat": "__auto",
           "refId": "A",
           "format": "table"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "(time() - ic_assignment_due_date_timestamp{student_name=~\"$student\"}) / 86400 and on(assignment_name, course_name, student_name, student_id) ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1",
+          "instant": true,
+          "legendFormat": "__auto",
+          "refId": "B",
+          "format": "table"
         }
       ],
       "transformations": [
         {
+          "id": "joinByField",
+          "options": { "byField": "assignment_name", "mode": "outer" }
+        },
+        {
           "id": "filterFieldsByName",
           "options": {
-            "include": { "names": ["course_name", "assignment_name", "Value"] }
+            "include": { "names": ["course_name", "assignment_name", "Value #A", "Value #B"] }
           }
         },
-        { "id": "sortBy", "options": { "fields": [{ "desc": false, "displayName": "course_name" }] } }
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "course_name": "Course",
+              "assignment_name": "Assignment",
+              "Value #A": "Missing",
+              "Value #B": "Days Overdue"
+            }
+          }
+        },
+        { "id": "sortBy", "options": { "fields": [{ "desc": true, "displayName": "Days Overdue" }] } }
       ]
     },
     {
@@ -602,5 +635,5 @@
   "timezone": "browser",
   "title": "Infinite Campus - Student Grades",
   "uid": "ic-campus-grades",
-  "version": 2
+  "version": 3
 }
