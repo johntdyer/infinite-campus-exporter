@@ -63,12 +63,12 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "title": "Missing Assignments",
+      "title": "Missing Assignments (All Time)",
       "type": "stat",
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum(ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)) or vector(0)",
+          "expr": "sum(ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"}) or vector(0)",
           "instant": true,
           "legendFormat": "Missing",
           "refId": "A"
@@ -318,12 +318,12 @@
         "showHeader": true,
         "sortBy": [{ "desc": false, "displayName": "Course" }]
       },
-      "title": "Missing Assignments",
+      "title": "Missing Assignments (All Time)",
       "type": "table",
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "(ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1) and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+          "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} == 1",
           "instant": true,
           "legendFormat": "__auto",
           "refId": "A",
@@ -498,7 +498,7 @@
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"} and on(assignment_name, course_name, student_name, student_id) ic_assignment_due_date_timestamp{student_name=~\"$student\"} > (time() - $weeks * 604800)",
+          "expr": "ic_assignment_flag{student_name=~\"$student\", flag=\"missing\"}",
           "instant": true,
           "legendFormat": "__auto",
           "refId": "D",
