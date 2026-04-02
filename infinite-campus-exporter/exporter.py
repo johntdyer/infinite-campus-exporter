@@ -136,15 +136,28 @@ async def collect_metrics(ic: InfiniteCampus) -> None:
                             ).set(1 if val else 0)
 
                     if a.duedate:
-                        for fmt in ("%Y-%m-%d", "%m/%d/%Y"):
-                            try:
-                                due_ts = datetime.strptime(a.duedate, fmt).replace(
-                                    tzinfo=timezone.utc
-                                ).timestamp()
-                                assignment_due_date_timestamp.labels(**labels).set(due_ts)
-                                break
-                            except ValueError:
-                                continue
+                        due_ts = None
+                        try:
+                            due_ts = datetime.fromisoformat(a.duedate).replace(
+                                tzinfo=timezone.utc
+                            ).timestamp()
+                        except ValueError:
+                            for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%m-%d-%Y"):
+                                try:
+                                    due_ts = datetime.strptime(a.duedate, fmt).replace(
+                                        tzinfo=timezone.utc
+                                    ).timestamp()
+                                    break
+                                except ValueError:
+                                    continue
+                        if due_ts is not None:
+                            assignment_due_date_timestamp.labels(**labels).set(due_ts)
+                        else:
+                            _LOGGER.warning(
+                                "Unrecognized due date format for %r: %r",
+                                a.assignmentname,
+                                a.duedate,
+                            )
 
                     course_counts[a.coursename] = course_counts.get(a.coursename, 0) + 1
 
